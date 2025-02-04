@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "415743077340",
+    "project_id": "tailmate-8c9d0",
+    "storage_bucket": "tailmate-8c9d0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415743077340:android:71f4051cade490d075bd19",
+        "android_client_info": {
+          "package_name": "com.example.tailmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG-z336VAGYvLOtGvH_R7v0jLQQuCaV6g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
