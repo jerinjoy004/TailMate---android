@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tailmate/screens/register.dart';
-import 'doctor_dashboard.dart'; // Replace with your actual dashboard files
+import 'register.dart';
+import 'doctor_dashboard.dart';
 import 'volunteer_dashboard.dart';
 import 'user_dashboard.dart';
 
@@ -48,35 +48,55 @@ class _LoginPageState extends State<LoginPage> {
           .get();
 
       if (userDoc.exists) {
-        String userType = userDoc['userType']; // Get the userType field
+        String userType = userDoc.get('userType'); // Safely get the userType
 
         // Navigate to the appropriate dashboard
         if (userType == "Doctor") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => DoctorDashboard()),
+            MaterialPageRoute(builder: (context) => const DoctorDashboard()),
           );
         } else if (userType == "Volunteer") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => VolunteerDashboard()),
+            MaterialPageRoute(builder: (context) => const VolunteerDashboard()),
           );
         } else if (userType == "Normal User") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NormalUserDashboard()),
+            MaterialPageRoute(
+                builder: (context) => const NormalUserDashboard()),
+          );
+        } else {
+          // Handle unexpected userType
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Unknown user type.")),
           );
         }
       } else {
+        // User data not found in Firestore
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User data not found.")),
+          const SnackBar(
+              content: Text("User data not found. Please register again.")),
         );
       }
     } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = "No user found for that email.";
+      } else if (e.code == 'wrong-password') {
+        errorMessage = "Wrong password provided.";
+      } else {
+        errorMessage = "Login failed: ${e.message}";
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${e.toString()}")),
+        SnackBar(content: Text(errorMessage)),
       );
-      print(e.message);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An unexpected error occurred.")),
+      );
+      print("Error: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -141,7 +161,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterPage()),
                   );
                 },
                 child: const Text("Don't have an account? Register here"),
